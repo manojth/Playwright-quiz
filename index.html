@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Playwright Automation Quiz</title>
+<!-- Supabase Removed -->
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap');
+
+  :root {
+    --bg: #0a0e1a;
+    --surface: #111827;
+    --surface2: #1a2235;
+    --border: #1e2d45;
+    --accent: #2EAD33;      /* Playwright Green */
+    --accent2: #45BAEE;     /* Playwright Blue */
+    --green: #10b981;
+    --red: #ef4444;
+    --yellow: #f59e0b;
+    --text: #e2e8f0;
+    --muted: #64748b;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1rem;
+    background-image:
+      radial-gradient(ellipse at 20% 10%, rgba(0,212,255,0.06) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 90%, rgba(124,58,237,0.08) 0%, transparent 50%);
+  }
+
+  /* ── AUTH SCREEN ── */
+  .auth-wrapper {
+    width: 100%;
+    max-width: 440px;
+    margin-top: 4rem;
+    animation: slideIn 0.4s ease;
+  }
+
+  .auth-logo {
+    text-align: center;
+    margin-bottom: 2.5rem;
+  }
+
+  .auth-logo h1 {
+    font-size: 2.2rem;
+    font-weight: 800;
+    letter-spacing: -1px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .auth-logo p {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--muted);
+    margin-top: 0.3rem;
+  }
+
+  .auth-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2rem;
+  }
+
+  .auth-tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.8rem;
+  }
+
+  .auth-tab {
+    flex: 1;
+    padding: 0.6rem;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--muted);
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .auth-tab.active {
+    background: linear-gradient(135deg, rgba(0,212,255,0.15), rgba(124,58,237,0.15));
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .form-group {
+    margin-bottom: 1.1rem;
+  }
+
+  .form-group label {
+    display: block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 0.4rem;
+  }
+
+  .form-group input {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+    padding: 0.75rem 1rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .form-group input:focus { border-color: var(--accent); }
+  .form-group input::placeholder { color: var(--muted); }
+
+  .auth-btn {
+    width: 100%;
+    padding: 0.85rem;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border: none;
+    border-radius: 10px;
+    color: #fff;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-top: 0.5rem;
+    transition: opacity 0.2s, transform 0.15s;
+  }
+
+  .auth-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+  .auth-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+  .auth-error {
+    background: rgba(239,68,68,0.1);
+    border: 1px solid rgba(239,68,68,0.3);
+    border-radius: 8px;
+    color: var(--red);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    padding: 0.7rem 1rem;
+    margin-top: 1rem;
+    display: none;
+  }
+
+  .auth-success {
+    background: rgba(16,185,129,0.1);
+    border: 1px solid rgba(16,185,129,0.3);
+    border-radius: 8px;
+    color: var(--green);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    padding: 0.7rem 1rem;
+    margin-top: 1rem;
+    display: none;
+  }
+
+  /* ── MAIN APP ── */
+  .app-wrapper {
+    width: 100%;
+    max-width: 780px;
+    display: none;
+  }
+
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .header-left h1 {
+    font-size: clamp(1.4rem, 3vw, 2rem);
+    font-weight: 800;
+    letter-spacing: -1px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .header-left p {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-top: 0.2rem;
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .user-badge {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.4rem 0.8rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+
+  .user-badge span { color: var(--accent); }
+
+  .logout-btn {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--muted);
+    font-family: 'Syne', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 0.4rem 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .logout-btn:hover { border-color: var(--red); color: var(--red); }
+
+  /* History panel */
+  .history-toggle {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--muted);
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    padding: 0.6rem 1rem;
+    cursor: pointer;
+    margin-bottom: 1.5rem;
+    width: 100%;
+    text-align: left;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.2s;
+  }
+
+  .history-toggle:hover { border-color: var(--accent); color: var(--accent); }
+
+  .history-panel {
+    display: none;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    animation: slideIn 0.3s ease;
+  }
+
+  .history-panel.open { display: block; }
+
+  .history-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.2rem;
+  }
+
+  .history-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem;
+    text-align: center;
+  }
+
+  .history-card .hc-level {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 0.6rem;
+  }
+
+  .history-card.basic .hc-level { color: var(--green); }
+  .history-card.intermediate .hc-level { color: var(--yellow); }
+  .history-card.advanced .hc-level { color: var(--red); }
+
+  .history-card .hc-best {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--text);
+    line-height: 1;
+  }
+
+  .history-card .hc-avg {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--muted);
+    margin-top: 0.3rem;
+  }
+
+  .history-card .hc-attempts {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--muted);
+    margin-top: 0.2rem;
+  }
+
+  .recent-attempts h3 {
+    font-size: 0.8rem;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 0.75rem;
+  }
+
+  .attempt-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.85rem;
+  }
+
+  .attempt-row:last-child { border-bottom: none; }
+
+  .attempt-level {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+  }
+
+  .attempt-level.basic { background: rgba(16,185,129,0.15); color: var(--green); }
+  .attempt-level.intermediate { background: rgba(245,158,11,0.15); color: var(--yellow); }
+  .attempt-level.advanced { background: rgba(239,68,68,0.15); color: var(--red); }
+
+  .attempt-score { font-weight: 700; color: var(--accent); font-family: 'JetBrains Mono', monospace; }
+  .attempt-date { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: var(--muted); }
+
+  .no-history {
+    text-align: center;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.82rem;
+    padding: 1rem 0;
+  }
+
+  /* ── LEVEL SELECTOR ── */
+  .level-selector {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .level-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 1.2rem 1rem;
+    border-radius: 12px;
+    cursor: pointer;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    transition: all 0.2s;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .level-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .level-btn.basic::before { background: linear-gradient(135deg, rgba(16,185,129,0.15), transparent); }
+  .level-btn.intermediate::before { background: linear-gradient(135deg, rgba(245,158,11,0.15), transparent); }
+  .level-btn.advanced::before { background: linear-gradient(135deg, rgba(239,68,68,0.15), transparent); }
+
+  .level-btn:hover::before, .level-btn.active::before { opacity: 1; }
+  .level-btn.basic { border-color: rgba(16,185,129,0.3); }
+  .level-btn.intermediate { border-color: rgba(245,158,11,0.3); }
+  .level-btn.advanced { border-color: rgba(239,68,68,0.3); }
+  .level-btn.active.basic { border-color: var(--green); box-shadow: 0 0 20px rgba(16,185,129,0.2); }
+  .level-btn.active.intermediate { border-color: var(--yellow); box-shadow: 0 0 20px rgba(245,158,11,0.2); }
+  .level-btn.active.advanced { border-color: var(--red); box-shadow: 0 0 20px rgba(239,68,68,0.2); }
+  .level-icon { font-size: 1.5rem; display: block; margin-bottom: 0.3rem; }
+  .level-label { font-size: 0.75rem; opacity: 0.6; font-weight: 400; font-family: 'JetBrains Mono', monospace; }
+
+  /* ── PROGRESS ── */
+  .progress-bar-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    height: 6px;
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+  }
+
+  .progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 8px;
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+
+  .progress-info {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--muted);
+    margin-bottom: 0.5rem;
+  }
+
+  /* ── QUESTION CARD ── */
+  .question-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2rem;
+    margin-bottom: 1rem;
+    animation: slideIn 0.3s ease;
+  }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .question-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 0.75rem;
+  }
+
+  .question-text { font-size: 1.1rem; font-weight: 700; line-height: 1.5; margin-bottom: 1.5rem; }
+
+  .code-block {
+    background: #0d1117;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem 1.2rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.82rem;
+    color: #a9c3e3;
+    margin-bottom: 1.5rem;
+    overflow-x: auto;
+    line-height: 1.7;
+    white-space: pre;
+  }
+
+  .options { display: flex; flex-direction: column; gap: 0.65rem; }
+
+  .option-btn {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    padding: 0.9rem 1.2rem;
+    text-align: left;
+    cursor: pointer;
+    font-family: 'Syne', sans-serif;
+    font-size: 0.95rem;
+    transition: all 0.18s;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .option-btn:hover:not(:disabled) {
+    border-color: var(--accent);
+    background: rgba(0,212,255,0.05);
+    transform: translateX(4px);
+  }
+
+  .option-btn .opt-label {
+    background: var(--border);
+    color: var(--muted);
+    border-radius: 6px;
+    width: 28px; height: 28px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem; font-weight: 700;
+    flex-shrink: 0;
+    transition: all 0.18s;
+  }
+
+  .option-btn.correct { border-color: var(--green); background: rgba(16,185,129,0.1); }
+  .option-btn.correct .opt-label { background: var(--green); color: #000; }
+  .option-btn.wrong { border-color: var(--red); background: rgba(239,68,68,0.08); }
+  .option-btn.wrong .opt-label { background: var(--red); color: #fff; }
+  .option-btn:disabled { cursor: default; }
+
+  .explanation {
+    margin-top: 1.2rem;
+    padding: 1.1rem 1.3rem;
+    border-radius: 10px;
+    font-size: 0.92rem;
+    line-height: 1.6;
+    animation: fadeIn 0.3s ease;
+    display: none;
+  }
+
+  .explanation.show { display: block; }
+  .explanation.correct-exp { background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.3); }
+  .explanation.wrong-exp { background: rgba(239,68,68,0.06); border: 1px solid rgba(239,68,68,0.2); }
+  .explanation strong { color: var(--accent); }
+
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  .next-btn {
+    width: 100%;
+    margin-top: 1rem;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border: none;
+    border-radius: 10px;
+    color: #fff;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    padding: 0.9rem;
+    cursor: pointer;
+    display: none;
+    transition: opacity 0.2s, transform 0.15s;
+  }
+
+  .next-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+  .next-btn.show { display: block; animation: fadeIn 0.3s ease; }
+
+  /* ── SCORE SCREEN ── */
+  .score-screen {
+    display: none;
+    text-align: center;
+    padding: 3rem 2rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    animation: slideIn 0.4s ease;
+  }
+
+  .score-screen.show { display: block; }
+
+  .score-number {
+    font-size: 5rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+  }
+
+  .score-label { color: var(--muted); font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; margin-top: 0.5rem; }
+  .score-msg { font-size: 1.2rem; font-weight: 700; margin: 1.5rem 0 0.5rem; }
+  .score-sub { color: var(--muted); font-size: 0.9rem; }
+  .score-saved { color: var(--green); font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; margin-top: 0.75rem; }
+
+  .score-actions { display: flex; gap: 0.75rem; justify-content: center; margin-top: 2rem; flex-wrap: wrap; }
+
+  .restart-btn {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.95rem;
+    padding: 0.8rem 1.5rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .restart-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  .start-screen {
+    text-align: center;
+    padding: 1.5rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+  }
+
+  .start-screen p { color: var(--muted); line-height: 1.7; font-size: 0.95rem; }
+
+  .badge {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 20px;
+    margin: 0.2rem;
+  }
+
+  .badge.b { background: rgba(16,185,129,0.15); color: var(--green); border: 1px solid rgba(16,185,129,0.3); }
+  .badge.i { background: rgba(245,158,11,0.15); color: var(--yellow); border: 1px solid rgba(245,158,11,0.3); }
+  .badge.a { background: rgba(239,68,68,0.15); color: var(--red); border: 1px solid rgba(239,68,68,0.3); }
+
+  .loading-spinner {
+    display: inline-block;
+    width: 14px; height: 14px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<!-- ── AUTH SCREEN ── -->
+<div class="auth-wrapper" id="authScreen">
+  <div class="auth-logo">
+    <h1>Playwright Quiz</h1>
+    <p>// playwright &amp; web automation mastery</p>
+  </div>
+  <div class="auth-card">
+    <div id="onboardingForm">
+      <div class="form-group">
+        <label>Pick a Username / Display Name</label>
+        <input type="text" id="usernameInput" placeholder="Agent Playwright" maxlength="20" onkeydown="if(event.key==='Enter') handleOnboarding()" />
+      </div>
+      <button class="auth-btn" id="onboardBtn" onclick="handleOnboarding()">Begin Session →</button>
+      <div class="auth-error" id="onboardError"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── MAIN APP ── -->
+<div class="app-wrapper" id="appScreen">
+
+  <header>
+    <div class="header-left">
+      <h1>Playwright Quiz</h1>
+      <p>// playwright &amp; web automation mastery</p>
+    </div>
+    <div class="header-right">
+      <div class="user-badge">👤 <span id="displayName"></span></div>
+      <button class="logout-btn" onclick="handleLogout()">Sign Out</button>
+    </div>
+  </header>
+
+  <!-- History toggle -->
+  <button class="history-toggle" onclick="toggleHistory()">
+    <span>📊 My Results History</span>
+    <span id="historyArrow">▼</span>
+  </button>
+
+  <div class="history-panel" id="historyPanel">
+    <div class="history-grid" id="historyGrid">
+      <div class="history-card basic">
+        <div class="hc-level">Basic</div>
+        <div class="hc-best" id="basicBest">—</div>
+        <div class="hc-avg" id="basicAvg">Avg: —</div>
+        <div class="hc-attempts" id="basicAttempts">0 attempts</div>
+      </div>
+      <div class="history-card intermediate">
+        <div class="hc-level">Intermediate</div>
+        <div class="hc-best" id="intermediateBest">—</div>
+        <div class="hc-avg" id="intermediateAvg">Avg: —</div>
+        <div class="hc-attempts" id="intermediateAttempts">0 attempts</div>
+      </div>
+      <div class="history-card advanced">
+        <div class="hc-level">Advanced</div>
+        <div class="hc-best" id="advancedBest">—</div>
+        <div class="hc-avg" id="advancedAvg">Avg: —</div>
+        <div class="hc-attempts" id="advancedAttempts">0 attempts</div>
+      </div>
+    </div>
+    <div class="recent-attempts">
+      <h3>Recent Attempts</h3>
+      <div id="recentList"><div class="no-history">No attempts yet. Complete a quiz to see your history!</div></div>
+    </div>
+  </div>
+
+  <!-- Level selector -->
+  <div class="level-selector">
+    <button class="level-btn basic" onclick="selectLevel('basic')">
+      <span class="level-icon">🟢</span>
+      Basic
+      <div class="level-label">Fundamentals</div>
+    </button>
+    <button class="level-btn intermediate" onclick="selectLevel('intermediate')">
+      <span class="level-icon">🟡</span>
+      Intermediate
+      <div class="level-label">Proficiency</div>
+    </button>
+    <button class="level-btn advanced" onclick="selectLevel('advanced')">
+      <span class="level-icon">🔴</span>
+      Advanced
+      <div class="level-label">Expert Level</div>
+    </button>
+  </div>
+
+  <div id="startScreen" class="start-screen">
+    <p>Select a difficulty level above to begin.<br>Each test has <strong>10 questions</strong> — one at a time with explanations. Your results are saved automatically.</p>
+    <div style="margin-top:0.75rem">
+      <span class="badge b">BASIC — WebDriver, locators, assertions</span>
+      <span class="badge i">INTERMEDIATE — waits, POM, frameworks</span>
+      <span class="badge a">ADVANCED — parallel, CI/CD, CDP</span>
+    </div>
+  </div>
+
+  <div id="progressInfo" class="progress-info" style="display:none">
+    <span id="questionCount">Question 1 of 10</span>
+    <span id="scoreTrack">Score: 0</span>
+  </div>
+  <div id="progressWrap" class="progress-bar-wrap" style="display:none">
+    <div id="progressBar" class="progress-bar"></div>
+  </div>
+
+  <div id="questionCard" class="question-card" style="display:none"></div>
+  <button id="nextBtn" class="next-btn" onclick="nextQuestion()">Next Question →</button>
+
+  <div id="scoreScreen" class="score-screen"></div>
+</div>
+
+<script>
+// ── LOCAL STORAGE SESSION ──
+document.addEventListener('DOMContentLoaded', () => {
+  const savedUser = localStorage.getItem('pw_quiz_user');
+  if (savedUser) {
+    showApp(savedUser);
+  } else {
+    showAuth();
+  }
+});
+
+function handleOnboarding() {
+  const input = document.getElementById('usernameInput').value.trim();
+  const errEl = document.getElementById('onboardError');
+  errEl.style.display = 'none';
+
+  if (!input) {
+    errEl.textContent = 'Please enter a name to continue.';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  localStorage.setItem('pw_quiz_user', input);
+  showApp(input);
+}
+
+function handleLogout() {
+  localStorage.removeItem('pw_quiz_user');
+  showAuth();
+}
+
+function showApp(username) {
+  document.getElementById('authScreen').style.display = 'none';
+  document.getElementById('appScreen').style.display = 'block';
+  document.getElementById('displayName').textContent = username;
+  loadHistory();
+}
+
+function showAuth() {
+  document.getElementById('authScreen').style.display = 'block';
+  document.getElementById('appScreen').style.display = 'none';
+  resetQuizUI();
+}
+
+
+// ── HISTORY ──
+let historyOpen = false;
+
+function toggleHistory() {
+  historyOpen = !historyOpen;
+  document.getElementById('historyPanel').classList.toggle('open', historyOpen);
+  document.getElementById('historyArrow').textContent = historyOpen ? '▲' : '▼';
+}
+
+function loadHistory() {
+  const data = JSON.parse(localStorage.getItem('playwright_quiz_results') || '[]');
+
+  // Compute stats per level
+  const levels = ['basic', 'intermediate', 'advanced'];
+  levels.forEach(level => {
+    const rows = data.filter(r => r.level === level);
+    const count = rows.length;
+    const best = count > 0 ? Math.max(...rows.map(r => r.score)) : null;
+    const avg = count > 0 ? (rows.reduce((s, r) => s + r.percentage, 0) / count).toFixed(1) : null;
+
+    document.getElementById(`${level}Best`).textContent = best !== null ? `${best}/10` : '—';
+    document.getElementById(`${level}Avg`).textContent = avg !== null ? `Avg: ${avg}%` : 'Avg: —';
+    document.getElementById(`${level}Attempts`).textContent = `${count} attempt${count !== 1 ? 's' : ''}`;
+  });
+
+  // Recent 8 attempts
+  const recentList = document.getElementById('recentList');
+  if (data.length === 0) {
+    recentList.innerHTML = '<div class="no-history">No attempts yet. Complete a quiz to see your history!</div>';
+    return;
+  }
+
+  recentList.innerHTML = data.slice(-8).reverse().map(r => {
+    const d = new Date(r.completed_at);
+    const dateStr = d.toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' });
+    return `
+      <div class="attempt-row">
+        <span class="attempt-level ${r.level}">${r.level}</span>
+        <span class="attempt-score">${r.score}/${r.total} (${r.percentage}%)</span>
+        <span class="attempt-date">${dateStr}</span>
+      </div>`;
+  }).join('');
+}
+
+function saveResult(level, score, total) {
+  const percentage = parseFloat(((score / total) * 100).toFixed(2));
+  const username = localStorage.getItem('pw_quiz_user') || 'Anonymous';
+  
+  const results = JSON.parse(localStorage.getItem('playwright_quiz_results') || '[]');
+  const newResult = {
+    id: Date.now().toString(),
+    username: username,
+    level: level,
+    score: score,
+    total: total,
+    percentage: percentage,
+    completed_at: new Date().toISOString()
+  };
+  
+  results.push(newResult);
+  localStorage.setItem('playwright_quiz_results', JSON.stringify(results));
+
+  loadHistory();
+}
+
+// ── QUIZ LOGIC ──
+const questions = {
+  basic: [
+    { q: "Which command is used to install Playwright and its dependencies in a new project?", code: null, options: ["npm install playwright", "npx playwright install", "npm init playwright@latest", "playwright setup"], answer: 2, explanation: "<strong>npm init playwright@latest</strong> is the recommended way to bootstrap a new Playwright project, setting up the config, folders, and example tests." },
+    { q: "Which locator strategy is recommended as the most resilient to DOM changes?", code: "await page.locator(???).click();", options: ["CSS Selector", "XPath", "User-facing attributes (e.g., getByRole)", "ID Attribute"], answer: 2, explanation: "Playwright recommends using <strong>user-facing attributes</strong> like <code>getByRole</code> or <code>getByText</code> as they mirror how users interact with the page and are more resilient than structural selectors." },
+    { q: "What is the correct way to navigate to a URL in Playwright?", code: null, options: ["await page.open('url');", "await page.goto('url');", "await page.navigate('url');", "await browser.goto('url');"], answer: 1, explanation: "<strong>page.goto(url)</strong> is the standard method to navigate to a specific page. It returns a response object and waits for the page to fire the 'load' event by default." },
+    { q: "How do you check if a checkbox is checked using Playwright assertions?", code: "await expect(locator).???();", options: ["toBeChecked", "isSelected", "isChecked", "toHaveValue('checked')"], answer: 0, explanation: "The <strong>toBeChecked()</strong> web assertion is used to verify that a checkbox or radio button is selected." },
+    { q: "Which command runs Playwright tests in headed mode?", code: null, options: ["npx playwright test --headed", "npx playwright test --browser", "npx playwright test -h", "npx playwright test --show"], answer: 0, explanation: "By default, Playwright runs tests in headless mode. <strong>--headed</strong> is the flag used to see the browser UI during execution." },
+    { q: "How do you input text into a field in Playwright?", code: null, options: ["await locator.type('text');", "await locator.fill('text');", "await locator.sendValue('text');", "await locator.input('text');"], answer: 1, explanation: "<strong>locator.fill()</strong> is the fastest way to input value into a form field. <code>locator.pressSequentially()</code> (formerly <code>type</code>) simulates real typing character by character." },
+    { q: "What is the default timeout for Playwright's expect assertions?", code: null, options: ["1 second", "5 seconds", "10 seconds", "30 seconds"], answer: 1, explanation: "The default timeout for web assertions like <code>toBeVisible</code> is <strong>5 seconds</strong>, while the global test timeout is usually 30 seconds." },
+    { q: "Which file is the central configuration for a Playwright project?", code: null, options: ["playwright.json", "package.json", "playwright.config.ts", "test-config.js"], answer: 2, explanation: "<strong>playwright.config.ts</strong> (or .js) is where you define projects, reporters, timeouts, and global settings." },
+    { q: "How do you take a full-page screenshot in Playwright?", code: null, options: ["page.screenshot({ fullPage: true })", "page.saveScreenshot()", "page.captureFull()", "page.screenshot({ mode: 'full' })"], answer: 0, explanation: "Setting <strong>fullPage: true</strong> in the screenshot options tells Playwright to capture the entire scrollable height of the page." },
+    { q: "What does 'npx playwright install' actually download?", code: null, options: ["The Playwright NPM package", "The latest version of Node.js", "Browser binaries (Chromium, Firefox, WebKit)", "Test report templates"], answer: 2, explanation: "It downloads the specific <strong>browser binaries</strong> required by the current version of Playwright to ensure cross-browser consistency." }
+  ],
+  intermediate: [
+    { q: "What is Playwright's 'Auto-waiting' feature?", code: null, options: ["It pauses the test for 5 seconds for every action", "It waits for elements to be actionable before performing actions", "It waits for the network to be idle before every click", "It automatically restarts tests on failure"], answer: 1, explanation: "<strong>Auto-waiting</strong> means Playwright performs a range of actionability checks (visible, attached, stable, clickable) before executing actions like <code>click()</code> or <code>fill()</code>." },
+    { q: "How do you handle an element inside an iframe?", code: null, options: ["page.frame('name').click()", "page.frameLocator('selector').locator('element').click()", "page.into('iframe').click()", "page.switchTo('iframe').click()"], answer: 1, explanation: "<strong>frameLocator()</strong> allows you to create a locator that can retrieve elements within an iframe easily." },
+    { q: "Which command opens the Trace Viewer for a specific trace file?", code: null, options: ["npx playwright open-trace", "npx playwright trace", "npx playwright show-trace path/to/trace.zip", "npx playwright view trace.zip"], answer: 2, explanation: "<strong>show-trace</strong> followed by the path to the ZIP file opens the interactive Trace Viewer to inspect a recorded test run." },
+    { q: "How can you wait for a specific network response in a test?", code: "await page.waitForResponse(???);", options: ["url => url.includes('/api/data')", "state => state === 'done'", "'/api/data'", "response => response.status() === 200"], answer: 3, explanation: "The predicator <strong>response => response.status() === 200</strong> (or checking the URL) allows you to wait for a specific API call to complete before proceeding." },
+    { q: "What is the purpose of Page Object Model in Playwright?", code: null, options: ["To speed up test execution by 50%", "To group tests by page name", "To encapsulate page logic and locators for reusability", "To generate automatic test reports"], answer: 2, explanation: "<strong>Page Object Model (POM)</strong> is a design pattern that creates an abstraction of the UI, making tests easier to maintain and reducing code duplication." },
+    { q: "How do you create a fresh browser context in Playwright?", code: null, options: ["browser.newContext()", "browser.createContext()", "page.newContext()", "test.context()"], answer: 0, explanation: "<strong>browser.newContext()</strong> creates an isolated session with its own cookies and storage, similar to an Incognito window." },
+    { q: "Which hook runs once before all tests in a file?", code: null, options: ["test.beforeEach", "test.beforeInitial", "test.beforeAll", "test.setup"], answer: 2, explanation: "<strong>test.beforeAll()</strong> runs once at the beginning of the file, useful for setup tasks that don't need to be repeated for every test." },
+    { q: "How do you pause test execution to interact with the page or debugger?", code: null, options: ["await page.stop()", "await page.debug()", "await page.pause()", "await test.break()"], answer: 2, explanation: "<strong>page.pause()</strong> opens the Playwright Inspector, allowing you to step through code and explore locators." },
+    { q: "How do you handle a browser alert/dialog in Playwright?", code: null, options: ["page.on('dialog', dialog => dialog.accept())", "page.acceptAlert()", "page.click('OK')", "page.handle('alert')"], answer: 0, explanation: "Playwright is event-driven; you must set up a listener <strong>page.on('dialog', ...)</strong> to handle alerts, confirms, or prompts when they appear." },
+    { q: "What is 'Soft Assertion' in Playwright?", code: "await expect.soft(locator).toBeVisible();", options: ["An assertion that doesn't wait for the element", "An assertion that prints a warning but doesn't fail", "An assertion that fails the test but continues execution of remaining checks", "An assertion with a shorter timeout"], answer: 2, explanation: "<strong>expect.soft()</strong> allows the test to continue even if that specific assertion fails, collecting all failures until the end of the test." }
+  ],
+  advanced: [
+    { q: "How do you configure the number of parallel workers in playwright.config.ts?", code: null, options: ["parallel: 5", "workers: 5", "threads: 5", "instances: 5"], answer: 1, explanation: "The <strong>workers</strong> property in the config file controls how many parallel processes Playwright uses to run tests." },
+    { q: "How do you mock an API response in Playwright?", code: null, options: ["page.mock(url, body)", "page.route(url, route => route.fulfill({ body }))", "page.intercept(url, { status: 200 })", "page.api.mock(url, data)"], answer: 1, explanation: "<strong>page.route()</strong> is the powerful API for network interception, allowing you to fulfill requests with mock data without hitting the real backend." },
+    { q: "What is a 'Fixture' in Playwright Test?", code: null, options: ["Static test data defined in a JSON file", "An encapsulated piece of setup/teardown logic passed to tests", "A browser plugin for Chrome", "A specific type of UI locator"], answer: 1, explanation: "<strong>Fixtures</strong> are the building blocks of Playwright Test, providing isolated environment pieces (like <code>page</code> or <code>request</code>) to each test." },
+    { q: "How do you perform visual regression testing?", code: null, options: ["expect(page).toMatchImage()", "expect(page).toHaveScreenshot()", "expect(page).toBeEqual(baseline)", "expect(video).toBeValid()"], answer: 1, explanation: "<strong>toHaveScreenshot()</strong> automatically captures a screenshot and compares it against a baseline image, highlighting differences if they exist." },
+    { q: "How do you share authenticated state across multiple tests?", code: null, options: ["Copy cookies manually", "Save state to a file with storageState() and load it in the config", "Authenticated state is shared by default", "Use a global static variable"], answer: 1, explanation: "Using <strong>storageState</strong> allows you to log in once, save the cookies/local storage, and reuse that state for all other tests to save time." },
+    { q: "What is the purpose of 'npx playwright test --ui'?", code: null, options: ["To run tests on a UI-enabled server", "To open the interactive UI Mode for developing and debugging tests", "To generate a HTML report", "To install the Playwright Desktop App"], answer: 1, explanation: "<strong>UI Mode</strong> is a powerful interactive environment that lets you watch tests run live, go back in time using traces, and explore locators." },
+    { q: "How do you run a specific project defined in your config?", code: null, options: ["npx playwright test --project chromium", "npx playwright test -p chrome", "npx playwright test --browser=webkit", "Both A and B are valid"], answer: 0, explanation: "<strong>--project</strong> followed by the project name (e.g., chromium, webkit, firefox) targets that specific configuration for execution." },
+    { q: "What is a Global Setup file used for?", code: null, options: ["Installing dependencies", "Setting up environment variables or database state before any tests run", "Defining globally available functions", "Configuring the reporter UI"], answer: 1, explanation: "<strong>globalSetup</strong> runs once before all projects and tests, making it ideal for high-level tasks like seeding a database." },
+    { q: "How do you handle file downloads in Playwright?", code: "const downloadPromise = page.waitForEvent('download');", options: ["It's not possible in Playwright", "Wait for the download event and use the returned download object to save", "Check the 'Downloads' folder manually", "Playwright handles downloads automatically without code"], answer: 1, explanation: "You must use <strong>waitForEvent('download')</strong> to capture the download stream and then use methods like <code>saveAs()</code> to persist it." },
+    { q: "How do you configure test retries for flaky tests?", code: null, options: ["retries: 2 in config", "test.retry(2)", "npm test --retry=2", "Both A and C are valid"], answer: 3, explanation: "Retries can be set globally in the <strong>playwright.config.ts</strong> file using the <code>retries</code> property or passed via the <strong>--retries</strong> flag in the CLI." }
+  ]
+};
+
+let currentLevel = null;
+let currentIndex = 0;
+let score = 0;
+let answered = false;
+
+function selectLevel(level) {
+  document.querySelectorAll('.level-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.level-btn.${level}`).classList.add('active');
+  currentLevel = level;
+  currentIndex = 0;
+  score = 0;
+  answered = false;
+
+  document.getElementById('startScreen').style.display = 'none';
+  document.getElementById('scoreScreen').classList.remove('show');
+  document.getElementById('progressInfo').style.display = 'flex';
+  document.getElementById('progressWrap').style.display = 'block';
+  document.getElementById('nextBtn').classList.remove('show');
+
+  loadQuestion();
+}
+
+function loadQuestion() {
+  const qs = questions[currentLevel];
+  if (currentIndex >= qs.length) { showScore(); return; }
+
+  answered = false;
+  const q = qs[currentIndex];
+  const letters = ['A', 'B', 'C', 'D'];
+
+  document.getElementById('questionCount').textContent = `Question ${currentIndex + 1} of ${qs.length}`;
+  document.getElementById('scoreTrack').textContent = `Score: ${score}`;
+  document.getElementById('progressBar').style.width = `${(currentIndex / qs.length) * 100}%`;
+
+  let codeBlock = q.code ? `<div class="code-block">${escHtml(q.code)}</div>` : '';
+  let optHtml = q.options.map((opt, idx) => {
+    let letter = letters[idx];
+    return `
+    <button class="option-btn" onclick="selectAnswer(${idx})" id="opt${idx}">
+      <span class="opt-label">${letter}</span><span>${opt}</span>
+    </button>`;
+  }).join('');
+
+  document.getElementById('questionCard').innerHTML = `
+    <div class="question-tag">${currentLevel.toUpperCase()} · Q${currentIndex + 1}</div>
+    <div class="question-text">${q.q}</div>
+    ${codeBlock}
+    <div class="options">${optHtml}</div>
+    <div class="explanation" id="explanation"></div>
+  `;
+  document.getElementById('questionCard').style.display = 'block';
+  document.getElementById('nextBtn').classList.remove('show');
+}
+
+function selectAnswer(idx) {
+  if (answered) return;
+  answered = true;
+
+  const q = questions[currentLevel][currentIndex];
+  const opts = document.querySelectorAll('.option-btn');
+  opts.forEach(b => b.disabled = true);
+
+  const isCorrect = idx === q.answer;
+  if (isCorrect) score++;
+
+  opts[idx].classList.add(isCorrect ? 'correct' : 'wrong');
+  if (!isCorrect) opts[q.answer].classList.add('correct');
+
+  const exp = document.getElementById('explanation');
+  exp.innerHTML = (isCorrect ? '✅ <strong>Correct!</strong> ' : '❌ <strong>Incorrect.</strong> ') + q.explanation;
+  exp.className = `explanation show ${isCorrect ? 'correct-exp' : 'wrong-exp'}`;
+
+  document.getElementById('scoreTrack').textContent = `Score: ${score}`;
+
+  const nextBtn = document.getElementById('nextBtn');
+  nextBtn.textContent = currentIndex < questions[currentLevel].length - 1 ? 'Next Question →' : 'See Results →';
+  nextBtn.classList.add('show');
+}
+
+function nextQuestion() {
+  currentIndex++;
+  loadQuestion();
+}
+
+async function showScore() {
+  document.getElementById('questionCard').style.display = 'none';
+  document.getElementById('nextBtn').classList.remove('show');
+  document.getElementById('progressBar').style.width = '100%';
+
+  const total = questions[currentLevel].length;
+  const pct = Math.round((score / total) * 100);
+  const msg = pct >= 90 ? '🏆 Outstanding!' : pct >= 70 ? '👍 Good Job!' : pct >= 50 ? '📚 Keep Practicing' : '🔄 Review & Retry';
+  const sub = pct >= 70 ? 'Consider moving to the next difficulty level.' : 'Review the explanations and try again.';
+
+  document.getElementById('scoreScreen').innerHTML = `
+    <div class="score-number">${score}/${total}</div>
+    <div class="score-label">${pct}% correct · ${currentLevel.toUpperCase()} level</div>
+    <div class="score-msg">${msg}</div>
+    <div class="score-sub">${sub}</div>
+    <div class="score-saved" id="savingStatus">💾 Saving result...</div>
+    <div class="score-actions">
+      <button class="restart-btn" onclick="selectLevel('${currentLevel}')">Retry This Test</button>
+      <button class="restart-btn" onclick="resetQuizUI()">Choose Another Level</button>
+    </div>
+  `;
+  document.getElementById('scoreScreen').classList.add('show');
+
+  await saveResult(currentLevel, score, total);
+  const el = document.getElementById('savingStatus');
+  if (el) el.textContent = '✅ Result saved to your profile!';
+}
+
+function resetQuizUI() {
+  document.querySelectorAll('.level-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('startScreen').style.display = 'block';
+  document.getElementById('scoreScreen').classList.remove('show');
+  document.getElementById('questionCard').style.display = 'none';
+  document.getElementById('progressInfo').style.display = 'none';
+  document.getElementById('progressWrap').style.display = 'none';
+  document.getElementById('nextBtn').classList.remove('show');
+  currentLevel = null;
+}
+
+function escHtml(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+</script>
+</body>
+</html>

@@ -477,12 +477,8 @@
     padding: 2.5rem;
     margin-bottom: 1rem;
     animation: slideIn 0.3s ease;
-    display: flex;
-    gap: 2.5rem;
-    align-items: flex-start;
   }
 
-  .q-main { flex: 1; min-width: 0; }
 
   @keyframes slideIn {
     from { opacity: 0; transform: translateY(10px); }
@@ -557,15 +553,13 @@
   .option-btn:disabled { cursor: default; }
 
   .explanation {
-    flex: 0 0 280px;
+    margin-top: 1.2rem;
     padding: 1.2rem 1.4rem;
     border-radius: 10px;
     font-size: 0.92rem;
     line-height: 1.6;
     animation: fadeIn 0.3s ease;
     display: none;
-    position: sticky;
-    top: 2rem;
   }
 
   .explanation.show { display: block; }
@@ -1039,15 +1033,13 @@ function loadQuestion() {
   }).join('');
 
   document.getElementById('questionCard').innerHTML = `
-    <div class="q-main">
-      <div class="question-tag">${currentLevel.toUpperCase()} · Q${currentIndex + 1}</div>
-      <div class="question-text">${q.q}</div>
-      ${codeBlock}
-      <div class="options">${optHtml}</div>
-    </div>
+    <div class="question-tag">${currentLevel.toUpperCase()} · Q${currentIndex + 1}</div>
+    <div class="question-text">${q.q}</div>
+    ${codeBlock}
+    <div class="options">${optHtml}</div>
     <div class="explanation" id="explanation"></div>
   `;
-  document.getElementById('questionCard').style.display = 'flex';
+  document.getElementById('questionCard').style.display = 'block';
   document.getElementById('nextBtn').classList.remove('show');
 }
 

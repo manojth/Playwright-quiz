@@ -518,17 +518,18 @@
   .question-card.show-result .next-btn { display: block; margin-top: 1.5rem; }
 
   .result-header {
+    margin-bottom: 1.2rem;
+    font-family: 'Syne', sans-serif;
+  }
+  .result-row {
     display: flex;
     align-items: center;
     gap: 0.6rem;
-    font-size: 1.1rem;
-    font-weight: 800;
-    margin-bottom: 0.8rem;
-    font-family: 'Syne', sans-serif;
+    line-height: 1.4;
   }
-  .result-header.correct { color: var(--green); }
-  .result-header.wrong { color: var(--red); }
-  .result-header .res-icon { font-size: 1.4rem; }
+  .result-row.correct { color: var(--green); font-size: 1.15rem; font-weight: 800; }
+  .result-row.wrong { color: var(--red); font-size: 0.9rem; font-weight: 700; opacity: 0.8; margin-bottom: 0.4rem; }
+  .result-row .res-icon { font-size: 1.2rem; }
 
   .option-btn {
     background: var(--surface2);
@@ -1077,11 +1078,18 @@ function selectAnswer(idx) {
   if (!isCorrect) opts[q.answer].classList.add('correct');
 
   const expEl = document.getElementById('explanation');
-  const chosenText = q.options[idx];
-  const correctText = q.options[q.answer];
+  const letters = ['A', 'B', 'C', 'D'];
+  const chosenText = `${letters[idx]}. ${q.options[idx]}`;
+  const correctText = `${letters[q.answer]}. ${q.options[q.answer]}`;
+  
   const resultHeader = isCorrect 
-    ? `<div class="result-header correct"><span class="res-icon">✅</span> Correct: ${correctText}</div>`
-    : `<div class="result-header wrong"><span style="text-decoration: line-through; opacity: 0.7; margin-right: 10px">${chosenText}</span> <span class="res-icon">❌</span> Incorrect. Correct: <span style="color: var(--green); font-weight: 700">${correctText}</span></div>`;
+    ? `<div class="result-header">
+         <div class="result-row correct"><span class="res-icon">✅</span> Correct: ${correctText}</div>
+       </div>`
+    : `<div class="result-header">
+         <div class="result-row wrong"><span style="text-decoration: line-through;">${chosenText}</span> <span class="res-icon">❌</span> Incorrect</div>
+         <div class="result-row correct"><span class="res-icon">✅</span> Correct: ${correctText}</div>
+       </div>`;
   
   expEl.innerHTML = `${resultHeader}<div>${q.explanation}</div>`;
   document.getElementById('questionCard').classList.add('show-result');

@@ -512,6 +512,24 @@
 
   .options { display: flex; flex-direction: column; gap: 0.65rem; }
 
+  /* ── RESULTS MODE ── */
+  .question-card.show-result .options { display: none; }
+  .question-card.show-result .explanation { display: block; margin-top: 0; }
+  .question-card.show-result .next-btn { display: block; margin-top: 1.5rem; }
+
+  .result-header {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 1.1rem;
+    font-weight: 800;
+    margin-bottom: 0.8rem;
+    font-family: 'Syne', sans-serif;
+  }
+  .result-header.correct { color: var(--green); }
+  .result-header.wrong { color: var(--red); }
+  .result-header .res-icon { font-size: 1.4rem; }
+
   .option-btn {
     background: var(--surface2);
     border: 1px solid var(--border);
@@ -1038,9 +1056,10 @@ function loadQuestion() {
     ${codeBlock}
     <div class="options">${optHtml}</div>
     <div class="explanation" id="explanation"></div>
+    <button class="next-btn" id="nextBtn" onclick="nextQuestion()">Next Question →</button>
   `;
+  document.getElementById('questionCard').classList.remove('show-result');
   document.getElementById('questionCard').style.display = 'block';
-  document.getElementById('nextBtn').classList.remove('show');
 }
 
 function selectAnswer(idx) {
@@ -1057,15 +1076,18 @@ function selectAnswer(idx) {
   opts[idx].classList.add(isCorrect ? 'correct' : 'wrong');
   if (!isCorrect) opts[q.answer].classList.add('correct');
 
-  const exp = document.getElementById('explanation');
-  exp.innerHTML = (isCorrect ? '✅ <strong>Correct!</strong> ' : '❌ <strong>Incorrect.</strong> ') + q.explanation;
-  exp.className = `explanation show ${isCorrect ? 'correct-exp' : 'wrong-exp'}`;
+  const expEl = document.getElementById('explanation');
+  const resultHeader = isCorrect 
+    ? `<div class="result-header correct"><span class="res-icon">✅</span> Correct</div>`
+    : `<div class="result-header wrong"><span class="res-icon">❌</span> Incorrect</div>`;
+  
+  expEl.innerHTML = `${resultHeader}<div>${q.explanation}</div>`;
+  document.getElementById('questionCard').classList.add('show-result');
 
   document.getElementById('scoreTrack').textContent = `Score: ${score}`;
 
   const nextBtn = document.getElementById('nextBtn');
   nextBtn.textContent = currentIndex < activeQuestions.length - 1 ? 'Next Question →' : 'See Results →';
-  nextBtn.classList.add('show');
 }
 
 function nextQuestion() {
@@ -1075,7 +1097,6 @@ function nextQuestion() {
 
 async function showScore() {
   document.getElementById('questionCard').style.display = 'none';
-  document.getElementById('nextBtn').classList.remove('show');
   document.getElementById('progressBar').style.width = '100%';
 
   const total = activeQuestions.length;
@@ -1110,7 +1131,6 @@ function resetQuizUI() {
   document.getElementById('questionCard').style.display = 'none';
   document.getElementById('progressInfo').style.display = 'none';
   document.getElementById('progressWrap').style.display = 'none';
-  document.getElementById('nextBtn').classList.remove('show');
   currentLevel = null;
 }
 

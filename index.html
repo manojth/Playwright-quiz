@@ -413,6 +413,7 @@
   }
 
   .level-selector.collapsed .level-btn:not(.active) { display: none; }
+  .level-selector.collapsed .change-level-link { display: inline-block; margin-left: auto; }
 
   .level-selector.collapsed .level-btn.active {
     background: transparent;
@@ -440,8 +441,6 @@
     text-decoration: underline;
     opacity: 0.8;
   }
-
-  .level-selector.collapsed + .change-level-link { display: inline-block; margin-left: auto; }
 
   /* ── PROGRESS ── */
   .progress-bar-wrap {
@@ -764,8 +763,8 @@
       Advanced
       <div class="level-label">Expert Level</div>
     </button>
+    <span class="change-level-link" onclick="resetQuizUI()">[ Change Level ]</span>
   </div>
-  <span class="change-level-link" onclick="resetQuizUI()">[ Change Level ]</span>
 
   <div id="startScreen" class="start-screen">
     <p>Select a difficulty level above to begin.<br>Each test has <strong>10 questions</strong> — one at a time with explanations. Your results are saved automatically.</p>

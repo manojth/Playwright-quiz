@@ -868,7 +868,47 @@ const questions = {
     { q: "What is the default timeout for Playwright's expect assertions?", code: null, options: ["1 second", "5 seconds", "10 seconds", "30 seconds"], answer: 1, explanation: "The default timeout for web assertions like <code>toBeVisible</code> is <strong>5 seconds</strong>, while the global test timeout is usually 30 seconds." },
     { q: "Which file is the central configuration for a Playwright project?", code: null, options: ["playwright.json", "package.json", "playwright.config.ts", "test-config.js"], answer: 2, explanation: "<strong>playwright.config.ts</strong> (or .js) is where you define projects, reporters, timeouts, and global settings." },
     { q: "How do you take a full-page screenshot in Playwright?", code: null, options: ["page.screenshot({ fullPage: true })", "page.saveScreenshot()", "page.captureFull()", "page.screenshot({ mode: 'full' })"], answer: 0, explanation: "Setting <strong>fullPage: true</strong> in the screenshot options tells Playwright to capture the entire scrollable height of the page." },
-    { q: "What does 'npx playwright install' actually download?", code: null, options: ["The Playwright NPM package", "The latest version of Node.js", "Browser binaries (Chromium, Firefox, WebKit)", "Test report templates"], answer: 2, explanation: "It downloads the specific <strong>browser binaries</strong> required by the current version of Playwright to ensure cross-browser consistency." }
+    { q: "What does 'npx playwright install' actually download?", code: null, options: ["The Playwright NPM package", "The latest version of Node.js", "Browser binaries (Chromium, Firefox, WebKit)", "Test report templates"], answer: 2, explanation: "It downloads the specific <strong>browser binaries</strong> required by the current version of Playwright to ensure cross-browser consistency." },
+    { q: "Which Playwright locator is used to find an element by its placeholder text?", code: null, options: ["page.getByPlaceholder()", "page.locator('placeholder')", "page.findByPlaceholder()", "page.getByText('placeholder')"], answer: 0, explanation: "<strong>page.getByPlaceholder()</strong> is the focused locator for finding input elements by their placeholder attribute values." },
+    { q: "How do you select an option from a dropdown by its visible text?", code: null, options: ["await locator.select('Option Text');", "await locator.selectOption({ label: 'Option Text' });", "await locator.click('Option Text');", "await locator.choose('Option Text');"], answer: 1, explanation: "<strong>locator.selectOption({ label: '...' })</strong> is the correct syntax for selecting a dropdown option by its displayed text." },
+    { q: "What is the purpose of 'page.waitForLoadState('networkidle')'?", code: null, options: ["To wait until there are no network requests for at least 500ms", "To wait for 5 seconds", "To wait for the page to finish animations", "To wait for the browser to stop spinning"], answer: 0, explanation: "<strong>networkidle</strong> waits until there are no network connections for at least 500ms, indicating the page is likely finished loading data." },
+    { q: "Which assertion verifies that an element is present in the DOM?", code: null, options: ["toBeVisible()", "toBeInDOM()", "toBeAttached()", "toExist()"], answer: 2, explanation: "<strong>toBeAttached()</strong> ensures the element is in the DOM, even if it is hidden. <code>toBeVisible()</code> also checks if it is visible to the user." },
+    { q: "How do you hover over an element in Playwright?", code: null, options: ["await locator.mouseOver();", "await locator.hover();", "await locator.moveMouse();", "await page.hover(selector);"], answer: 1, explanation: "<strong>locator.hover()</strong> simulates a mouse hover event over the specified element." },
+    { q: "What does the command 'npx playwright show-report' do?", code: null, options: ["Generates a new test report", "Starts a local server to view the last HTML test report", "Prints the test results in the terminal", "Opens the playwright config file"], answer: 1, explanation: "<strong>show-report</strong> serves the <code>playwright-report</code> folder on an HTTP server so you can view it in your browser." },
+    { q: "How do you run only the tests that failed in the previous run?", code: null, options: ["npx playwright test --failed", "npx playwright test --last-failed", "npx playwright test --retry-failed", "npx playwright test --run-failed"], answer: 1, explanation: "The <strong>--last-failed</strong> flag runs only the tests that didn't pass in the most recent execution." },
+    { q: "Which method is used to retrieve the value of an attribute from an element?", code: null, options: ["locator.getProperty()", "locator.getAttribute()", "locator.val()", "locator.attr()"], answer: 1, explanation: "<strong>locator.getAttribute(name)</strong> returns the value of the specified attribute, such as 'href' or 'src'." },
+    { q: "How do you simulate pressing the 'Enter' key on a focused element?", code: null, options: ["await locator.press('Enter');", "await locator.key('Enter');", "await locator.type('Enter');", "await page.keyboard.down('Enter');"], answer: 0, explanation: "<strong>locator.press('Enter')</strong> is the recommended way to send a keyboard shortcut or key event to a specific element." },
+    { q: "Which Playwright feature allows you to record user interactions and generate test code?", code: null, options: ["Playwright Inspector", "Playwright Codegen", "Trace Viewer", "UI Mode"], answer: 1, explanation: "<strong>Codegen</strong> (run via <code>npx playwright codegen</code>) opens a browser and a recorder to transform your actions into test scripts." },
+    { q: "How do you check if a button is disabled in Playwright?", code: null, options: ["await expect(locator).toBeDisabled();", "await expect(locator).not.toBeEnabled();", "await expect(locator).toHaveAttribute('disabled');", "All of the above"], answer: 3, explanation: "All these methods can verify an element's disabled state. <strong>toBeDisabled()</strong> is the most direct and idiomatic web assertion." },
+    { q: "What is a 'BrowserContext' compared to a 'Browser'?", code: null, options: ["There is no difference", "Browser is the application; BrowserContext is an isolated session (like an Incognito window)", "BrowserContext is a specific tab in the browser", "Browser runs on the server; BrowserContext runs on the client"], answer: 1, explanation: "A <strong>BrowserContext</strong> allows isolating tests from each other with separate cookies and storage, while sharing the same underlying Browser process for efficiency." },
+    { q: "How do you handle a browser dialog (alert) in a basic test?", code: "page.on('dialog', dialog => ???);", options: ["dialog.accept()", "dialog.dismiss()", "dialog.close()", "Both A and B are valid"], answer: 3, explanation: "You use the <strong>dialog</strong> event and can call <code>accept()</code> or <code>dismiss()</code> depending on whether you want to click OK or Cancel." },
+    { q: "Which locator finds an element by its text precisely, ignoring case?", code: null, options: ["page.getByText('Hello', { exact: false })", "page.locator('text=Hello')", "page.getByText('hello')", "Both A and B are valid"], answer: 3, explanation: "By default, <strong>getByText</strong> is case-insensitive. <code>exact: false</code> is unnecessary as it's the default behavior unless specified otherwise." },
+    { q: "How do you verify the URL of the current page?", code: null, options: ["await expect(page).toHaveURL('...');", "await expect(page).toBeAt('...');", "if (page.url() === '...') { ... }", "await expect(browser).toHaveURL('...');"], answer: 0, explanation: "<strong>toHaveURL</strong> is the built-in assertion for verifying the current page's address, supporting both strings and regular expressions." },
+    { q: "What is the purpose of the 'test.describe' block?", code: null, options: ["To name a single test", "To group related tests together for organization or shared hooks", "To describe the browser configuration", "To skip a group of tests"], answer: 1, explanation: "<strong>test.describe</strong> creates a logical group for your tests, making reports cleaner and allowing you to apply shared <code>beforeEach</code> hooks to the group." },
+    { q: "How do you run tests in a specific browser like Firefox from the CLI?", code: null, options: ["npx playwright test --browser=firefox", "npx playwright test --project=firefox", "npm run test firefox", "npx playwright test -f"], answer: 1, explanation: "Using <strong>--project</strong> is the standard way to run a specific configuration (like Firefox) defined in your <code>playwright.config.ts</code>." },
+    { q: "Which method is used to upload a file in Playwright?", code: null, options: ["locator.uploadFile('path')", "locator.setInputFiles('path')", "locator.setFiles('path')", "page.upload('path')"], answer: 1, explanation: "<strong>setInputFiles()</strong> is used on <code>&lt;input type='file'&gt;</code> elements to simulate choosing a file for upload." },
+    { q: "How do you check if an element is hidden?", code: null, options: ["await expect(locator).toBeHidden();", "await expect(locator).not.toBeVisible();", "Both are valid", "await expect(locator).toBeNone();"], answer: 2, explanation: "Both <strong>toBeHidden()</strong> and <strong>not.toBeVisible()</strong> work. <code>toBeHidden()</code> is more descriptive and handles elements that are in the DOM but hidden." },
+    { q: "What does 'page.reload()' do?", code: null, options: ["Clears the cache", "Refreshes the current page", "Navigates to the home page", "Closes and reopens the browser tab"], answer: 1, explanation: "<strong>page.reload()</strong> simply refreshes the current page, similar to clicking the refresh button in the browser." },
+    { q: "How do you define a custom 'Test ID' attribute in Playwright?", code: null, options: ["It's fixed to 'data-testid'", "Set 'testIdAttribute' in the playwright.config.ts", "Use the 'id' attribute", "Set 'playwright-id' in the HTML"], answer: 1, explanation: "While <code>data-testid</code> is the default, you can configure any attribute (like <code>data-qa</code>) as your <strong>testIdAttribute</strong> in the config." },
+    { q: "Which assertion checks that an element contains specific text?", code: null, options: ["toHaveText()", "toContainText()", "toMatch()", "toBeText()"], answer: 1, explanation: "<strong>toContainText()</strong> checks if the element (or its children) contains the specified substring, whereas <code>toHaveText()</code> requires an exact match (ignoring whitespace)." },
+    { q: "How do you double-click an element?", code: null, options: ["await locator.click({ clickCount: 2 });", "await locator.dblclick();", "Both are valid", "await locator.doubleClick();"], answer: 2, explanation: "Both <strong>dblclick()</strong> and <code>click({ clickCount: 2 })</code> work, though <code>dblclick()</code> is more idiomatic." },
+    { q: "What is the benefit of using 'expect(page).toHaveTitle()' instead of checking the title manually?", code: null, options: ["It's faster", "It includes auto-waiting/retrying until the condition is met", "It works on all browsers", "There is no benefit"], answer: 1, explanation: "<strong>Web assertions</strong> like <code>toHaveTitle</code> automatically wait and retry until the title matches, handling asynchronous updates gracefully." },
+    { q: "How do you run Playwright tests in parallel on a single machine?", code: null, options: ["Parallelism is the default state; configure 'fullyParallel' in the config", "Use the --parallel flag", "Run multiple terminal windows", "It's not possible"], answer: 0, explanation: "By default, Playwright runs tests in parallel using multiple worker processes. You can control this via <strong>fullyParallel</strong> or the <strong>workers</strong> property." },
+    { q: "Which locator finds an element by its associated <label> text?", code: null, options: ["page.getByLabel()", "page.getByText()", "page.locator('label')", "page.findLabel()"], answer: 0, explanation: "<strong>getByLabel()</strong> finds form elements (input, select, textarea) by searching for their associated <code>&lt;label&gt;</code> element's text." },
+    { q: "How do you verify that a specific element is enabled for interaction?", code: null, options: ["await expect(locator).toBeEnabled();", "await expect(locator).isActive();", "await expect(locator).toBeClickable();", "await expect(locator).canInteract();"], answer: 0, explanation: "<strong>toBeEnabled()</strong> is the standard assertion to ensure an element is not disabled via the <code>disabled</code> attribute or other means." },
+    { q: "What does the '--debug' flag do in the command line?", code: null, options: ["Prints detailed logs", "Opens the Playwright Inspector and pauses at the start of the test", "Runs tests at 0.5x speed", "Checks for syntax errors without running"], answer: 1, explanation: "<strong>--debug</strong> enables the Playwright Inspector, which is invaluable for stepping through tests and exploring locators interactively." },
+    { q: "Which method returns all the visible text content of an element?", code: null, options: ["locator.innerText()", "locator.textContent()", "locator.allTextContents()", "All of the above"], answer: 0, explanation: "<strong>innerText()</strong> returns the visible text (similar to what a user sees). <code>textContent()</code> returns all text, including hidden ones." },
+    { q: "How do you find an element by its title attribute?", code: null, options: ["page.getByTitle()", "page.locator('title')", "page.getAttribute('title')", "page.findByTitle()"], answer: 0, explanation: "<strong>page.getByTitle()</strong> is the focused locator for selecting elements via their HTML <code>title</code> attribute." },
+    { q: "How do you uncheck a checkbox in Playwright?", code: null, options: ["await locator.click();", "await locator.uncheck();", "await locator.setChecked(false);", "Both B and C are valid"], answer: 3, explanation: "Both <strong>uncheck()</strong> and <strong>setChecked(false)</strong> are valid and safe to use, as they ensure the checkbox ends up in the unchecked state." },
+    { q: "What is the purpose of 'page.keyboard.type()'?", code: null, options: ["It's a faster way to fill forms", "It simulates real keystrokes on the currently focused element", "It's for typing multi-line strings", "It clears the field before typing"], answer: 1, explanation: "<strong>page.keyboard.type()</strong> (or <code>pressSequentially</code>) sends individual keydown, keypress, and keyup events, mimicking a real user typing." },
+    { q: "Which command lists all available Playwright CLI options?", code: null, options: ["npx playwright --help", "playwright help", "npx playwright list", "npx playwright test --list"], answer: 0, explanation: "Running <strong>npx playwright --help</strong> (or specific subcommands like <code>test --help</code>) displays usage information and available flags." },
+    { q: "How do you check if a locator matches exactly one element?", code: null, options: ["await expect(locator).toHaveCount(1);", "await locator.count() === 1", "if (locator) { ... }", "Playwright actions fail by default if a locator matches multiple elements"], answer: 3, explanation: "Playwright has a <strong>Strictness</strong> policy: actions like <code>click()</code> will throw an error if the locator matches more than one element." },
+    { q: "How do you capture a screenshot of just a specific element?", code: null, options: ["page.screenshot(locator)", "locator.screenshot()", "page.capture(locator)", "locator.capture()"], answer: 1, explanation: "You can call <strong>.screenshot()</strong> directly on a locator to capture only that specific part of the page." },
+    { q: "Which reporter produces a clean HTML page with screenshots and traces?", code: null, options: ["list", "dot", "html", "junit"], answer: 2, explanation: "The <strong>html</strong> reporter creates a self-contained folder that can be opened in any browser to inspect test results deeply." },
+    { q: "How do you navigate back in the browser history?", code: null, options: ["page.back()", "page.goBack()", "page.navigation().back()", "page.navigate(-1)"], answer: 1, explanation: "<strong>page.goBack()</strong> is the correct method to navigate to the previous page in the session history." },
+    { q: "Which locator retrieves elements by their 'Alt' text (usually for images)?", code: null, options: ["page.getByAltText()", "page.getByImage()", "page.locator('alt')", "page.findAlt()"], answer: 0, explanation: "<strong>getByAltText()</strong> is specifically designed to find elements like images or area tags via their <code>alt</code> attribute." },
+    { q: "How do you get the count of elements matching a locator?", code: null, options: ["locator.length", "locator.count()", "locator.size()", "await locator.all().length"], answer: 1, explanation: "<strong>locator.count()</strong> returns the number of elements matching the locator at the moment of the call." },
+    { q: "What does 'test.only' do?", code: null, options: ["Runs only this test in the entire project", "Runs only this test in the specific file", "Highlights the test in the report", "Removes all other tests from the file"], answer: 0, explanation: "<strong>test.only</strong> tells Playwright to skip all other tests in the project and only run instances marked with <code>.only</code>." }
   ],
   intermediate: [
     { q: "What is Playwright's 'Auto-waiting' feature?", code: null, options: ["It pauses the test for 5 seconds for every action", "It waits for elements to be actionable before performing actions", "It waits for the network to be idle before every click", "It automatically restarts tests on failure"], answer: 1, explanation: "<strong>Auto-waiting</strong> means Playwright performs a range of actionability checks (visible, attached, stable, clickable) before executing actions like <code>click()</code> or <code>fill()</code>." },
@@ -900,14 +940,28 @@ let currentLevel = null;
 let currentIndex = 0;
 let score = 0;
 let answered = false;
+let activeQuestions = [];
+
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
 
 function selectLevel(level) {
   document.querySelectorAll('.level-btn').forEach(b => b.classList.remove('active'));
   document.querySelector(`.level-btn.${level}`).classList.add('active');
+  
   currentLevel = level;
   currentIndex = 0;
   score = 0;
   answered = false;
+
+  // Shuffle and pick 10 questions from the pool
+  const pool = [...questions[level]];
+  activeQuestions = shuffleArray(pool).slice(0, 10);
 
   document.getElementById('startScreen').style.display = 'none';
   document.getElementById('scoreScreen').classList.remove('show');
@@ -919,7 +973,7 @@ function selectLevel(level) {
 }
 
 function loadQuestion() {
-  const qs = questions[currentLevel];
+  const qs = activeQuestions;
   if (currentIndex >= qs.length) { showScore(); return; }
 
   answered = false;
@@ -954,7 +1008,7 @@ function selectAnswer(idx) {
   if (answered) return;
   answered = true;
 
-  const q = questions[currentLevel][currentIndex];
+  const q = activeQuestions[currentIndex];
   const opts = document.querySelectorAll('.option-btn');
   opts.forEach(b => b.disabled = true);
 
@@ -971,7 +1025,7 @@ function selectAnswer(idx) {
   document.getElementById('scoreTrack').textContent = `Score: ${score}`;
 
   const nextBtn = document.getElementById('nextBtn');
-  nextBtn.textContent = currentIndex < questions[currentLevel].length - 1 ? 'Next Question →' : 'See Results →';
+  nextBtn.textContent = currentIndex < activeQuestions.length - 1 ? 'Next Question →' : 'See Results →';
   nextBtn.classList.add('show');
 }
 
@@ -985,7 +1039,7 @@ async function showScore() {
   document.getElementById('nextBtn').classList.remove('show');
   document.getElementById('progressBar').style.width = '100%';
 
-  const total = questions[currentLevel].length;
+  const total = activeQuestions.length;
   const pct = Math.round((score / total) * 100);
   const msg = pct >= 90 ? '🏆 Outstanding!' : pct >= 70 ? '👍 Good Job!' : pct >= 50 ? '📚 Keep Practicing' : '🔄 Review & Retry';
   const sub = pct >= 70 ? 'Consider moving to the next difficulty level.' : 'Review the explanations and try again.';

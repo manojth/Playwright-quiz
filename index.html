@@ -409,6 +409,48 @@
   .level-icon { font-size: 1.5rem; display: block; margin-bottom: 0.3rem; }
   .level-label { font-size: 0.75rem; opacity: 0.6; font-weight: 400; font-family: 'JetBrains Mono', monospace; }
 
+  /* ── COLLAPSED LEVEL SELECTOR ── */
+  .level-selector.collapsed {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    grid-template-columns: none;
+    margin-bottom: 1.5rem;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .level-selector.collapsed .level-btn:not(.active) { display: none; }
+
+  .level-selector.collapsed .level-btn.active {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+    cursor: default;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.9rem;
+    pointer-events: none;
+  }
+
+  .level-selector.collapsed .level-btn.active::before { display: none; }
+  .level-selector.collapsed .level-btn.active .level-icon { font-size: 1rem; margin-bottom: 0; }
+  .level-selector.collapsed .level-btn.active .level-label { display: none; }
+
+  .change-level-link {
+    display: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--accent2);
+    cursor: pointer;
+    text-decoration: underline;
+    opacity: 0.8;
+  }
+
+  .level-selector.collapsed + .change-level-link { display: inline-block; margin-left: auto; }
+
   /* ── PROGRESS ── */
   .progress-bar-wrap {
     background: var(--surface);
@@ -718,7 +760,7 @@
   </div>
 
   <!-- Level selector -->
-  <div class="level-selector">
+  <div class="level-selector" id="levelSelector">
     <button class="level-btn basic" onclick="selectLevel('basic')">
       <span class="level-icon">🟢</span>
       Basic
@@ -735,6 +777,7 @@
       <div class="level-label">Expert Level</div>
     </button>
   </div>
+  <span class="change-level-link" onclick="resetQuizUI()">[ Change Level ]</span>
 
   <div id="startScreen" class="start-screen">
     <p>Select a difficulty level above to begin.<br>Each test has <strong>10 questions</strong> — one at a time with explanations. Your results are saved automatically.</p>
@@ -964,9 +1007,11 @@ function shuffleArray(array) {
 }
 
 function selectLevel(level) {
+  const selector = document.getElementById('levelSelector');
   document.querySelectorAll('.level-btn').forEach(b => b.classList.remove('active'));
   document.querySelector(`.level-btn.${level}`).classList.add('active');
   
+  selector.classList.add('collapsed');
   currentLevel = level;
   currentIndex = 0;
   score = 0;
@@ -1078,6 +1123,8 @@ async function showScore() {
 }
 
 function resetQuizUI() {
+  const selector = document.getElementById('levelSelector');
+  selector.classList.remove('collapsed');
   document.querySelectorAll('.level-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('startScreen').style.display = 'block';
   document.getElementById('scoreScreen').classList.remove('show');

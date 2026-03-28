@@ -1077,9 +1077,10 @@ function selectAnswer(idx) {
   if (!isCorrect) opts[q.answer].classList.add('correct');
 
   const expEl = document.getElementById('explanation');
+  const chosenText = q.options[idx];
   const resultHeader = isCorrect 
     ? `<div class="result-header correct"><span class="res-icon">✅</span> Correct</div>`
-    : `<div class="result-header wrong"><span class="res-icon">❌</span> Incorrect</div>`;
+    : `<div class="result-header wrong"><span style="text-decoration: line-through; opacity: 0.7; margin-right: 10px">${chosenText}</span> <span class="res-icon">❌</span> Incorrect</div>`;
   
   expEl.innerHTML = `${resultHeader}<div>${q.explanation}</div>`;
   document.getElementById('questionCard').classList.add('show-result');

@@ -238,29 +238,21 @@
   }
 
   .logout-btn:hover { border-color: var(--red); color: var(--red); }
-
-  /* History panel */
-  .history-toggle {
-    background: var(--surface);
+  .history-btn {
+    background: var(--surface2);
     border: 1px solid var(--border);
-    border-radius: 10px;
+    border-radius: 8px;
     color: var(--muted);
     font-family: 'Syne', sans-serif;
+    font-size: 0.8rem;
     font-weight: 700;
-    font-size: 0.85rem;
-    padding: 0.6rem 1rem;
+    padding: 0.4rem 0.8rem;
     cursor: pointer;
-    margin-bottom: 1.5rem;
-    width: 100%;
-    text-align: left;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
     transition: all 0.2s;
   }
+  .history-btn:hover { border-color: var(--yellow); color: var(--yellow); }
 
-  .history-toggle:hover { border-color: var(--accent); color: var(--accent); }
-
+  /* History panel */
   .history-panel {
     display: none;
     background: var(--surface);
@@ -721,16 +713,12 @@
       <p>// playwright &amp; web automation mastery</p>
     </div>
     <div class="header-right">
+      <button class="logout-btn history-btn" id="historyToggleBtn" onclick="toggleHistory()" style="margin-right: 0.5rem; border-color: var(--border);">📊 History <span id="historyArrow" style="font-size:0.6rem; margin-left:2px">▼</span></button>
       <div class="user-badge">👤 <span id="displayName"></span></div>
       <button class="logout-btn" onclick="handleLogout()">Sign Out</button>
     </div>
   </header>
 
-  <!-- History toggle -->
-  <button class="history-toggle" onclick="toggleHistory()">
-    <span>📊 My Results History</span>
-    <span id="historyArrow">▼</span>
-  </button>
 
   <div class="history-panel" id="historyPanel">
     <div class="history-grid" id="historyGrid">

@@ -21,9 +21,14 @@
     --text: #e2e8f0;
     --muted: #64748b;
     --font-main: 'Syne', sans-serif;
+    --font-size-base: 16px;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html {
+    font-size: var(--font-size-base);
+  }
 
   body {
     background: var(--bg);
@@ -276,14 +281,29 @@
     margin-bottom: 2rem;
     animation: fadeIn 0.3s ease;
   }
-  .settings-panel.open { display: block; }
   .settings-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 1.2rem; color: var(--accent2); font-family: 'Syne', sans-serif; }
+  .settings-subtitle { font-size: 0.85rem; font-weight: 700; margin-bottom: 0.6rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 1rem; }
   
-  .font-options {
+  .font-options, .size-options {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
     gap: 0.8rem;
+    margin-bottom: 1.5rem;
   }
+  .size-btn {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.7rem;
+    color: var(--text);
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s;
+    font-size: 0.9rem;
+  }
+  .size-btn:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .size-btn.active { border-color: var(--accent); background: rgba(46,173,51,0.1); }
+
   .font-btn {
     background: var(--surface2);
     border: 1px solid var(--border);
@@ -782,6 +802,8 @@
 
   <div class="settings-panel" id="settingsPanel">
     <div class="settings-title">Appearance Settings</div>
+    
+    <div class="settings-subtitle">Select Font</div>
     <div class="font-options">
       <button class="font-btn" onclick="changeFont('Syne', 'Syne, sans-serif')">
         <span class="font-preview" style="font-family: 'Syne';">Syne</span>
@@ -803,6 +825,14 @@
         <span class="font-preview" style="font-family: 'JetBrains Mono';">Mono</span>
         Technical
       </button>
+    </div>
+
+    <div class="settings-subtitle">Font Size</div>
+    <div class="size-options">
+      <button class="size-btn" onclick="changeFontSize('14px')" id="size-14">Small</button>
+      <button class="size-btn" onclick="changeFontSize('16px')" id="size-16">Normal</button>
+      <button class="size-btn" onclick="changeFontSize('18px')" id="size-18">Large</button>
+      <button class="size-btn" onclick="changeFontSize('20px')" id="size-20">Extra Large</button>
     </div>
   </div>
 
@@ -892,6 +922,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const savedFont = localStorage.getItem('pw_quiz_font_family') || 'Syne, sans-serif';
   document.documentElement.style.setProperty('--font-main', savedFont);
   
+  // Apply saved font size
+  const savedSize = localStorage.getItem('pw_quiz_font_size') || '16px';
+  changeFontSize(savedSize);
+  
   if (currentUser) {
     showApp(currentUser);
   } else {
@@ -951,6 +985,17 @@ function changeFont(name, family) {
   // Update UI active state
   document.querySelectorAll('.font-btn').forEach(btn => {
     btn.classList.toggle('active', btn.textContent.includes(name));
+  });
+}
+
+function changeFontSize(size) {
+  document.documentElement.style.setProperty('--font-size-base', size);
+  localStorage.setItem('pw_quiz_font_size', size);
+  
+  // Update UI active state
+  document.querySelectorAll('.size-btn').forEach(btn => {
+    const id = btn.id;
+    btn.classList.toggle('active', id === `size-${size.replace('px','')}`);
   });
 }
 

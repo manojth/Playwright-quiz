@@ -6,7 +6,7 @@
 <title>Playwright Automation Quiz</title>
 <!-- Supabase Removed -->
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=JetBrains+Mono:wght@400;700&family=Literata:ital,opsz,wght@0,7..72,200..900;1,7..72,200..900&family=Roboto:wght@400;500;700&family=Syne:wght@400;700;800&display=swap');
 
   :root {
     --bg: #0a0e1a;
@@ -20,6 +20,7 @@
     --yellow: #f59e0b;
     --text: #e2e8f0;
     --muted: #64748b;
+    --font-main: 'Syne', sans-serif;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -27,7 +28,7 @@
   body {
     background: var(--bg);
     color: var(--text);
-    font-family: 'Syne', sans-serif;
+    font-family: var(--font-main);
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -250,7 +251,53 @@
     cursor: pointer;
     transition: all 0.2s;
   }
+  .settings-btn {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--muted);
+    font-family: 'Syne', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 0.4rem 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .settings-btn:hover { border-color: var(--accent2); color: var(--accent2); }
   .history-btn:hover { border-color: var(--yellow); color: var(--yellow); }
+
+  /* Settings panel */
+  .settings-panel {
+    display: none;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    animation: fadeIn 0.3s ease;
+  }
+  .settings-panel.open { display: block; }
+  .settings-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 1.2rem; color: var(--accent2); font-family: 'Syne', sans-serif; }
+  
+  .font-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 0.8rem;
+  }
+  .font-btn {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem;
+    color: var(--text);
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s;
+    font-size: 0.9rem;
+  }
+  .font-btn:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .font-btn.active { border-color: var(--accent); background: rgba(46,173,51,0.1); }
+  .font-preview { font-size: 1.2rem; font-weight: 700; display: block; margin-bottom: 0.4rem; }
 
   /* History panel */
   .history-panel {
@@ -726,11 +773,38 @@
       <p>// playwright &amp; web automation mastery</p>
     </div>
     <div class="header-right">
+      <button class="settings-btn" onclick="toggleSettings()" style="margin-right: 0.5rem;">⚙️ Settings</button>
       <button class="logout-btn history-btn" id="historyToggleBtn" onclick="toggleHistory()" style="margin-right: 0.5rem; border-color: var(--border);">📊 History <span id="historyArrow" style="font-size:0.6rem; margin-left:2px">▼</span></button>
       <div class="user-badge">👤 <span id="displayName"></span></div>
       <button class="logout-btn" onclick="handleLogout()">Sign Out</button>
     </div>
   </header>
+
+  <div class="settings-panel" id="settingsPanel">
+    <div class="settings-title">Appearance Settings</div>
+    <div class="font-options">
+      <button class="font-btn" onclick="changeFont('Syne', 'Syne, sans-serif')">
+        <span class="font-preview" style="font-family: 'Syne';">Syne</span>
+        Modern & Sharp
+      </button>
+      <button class="font-btn" onclick="changeFont('Inter', 'Inter, sans-serif')">
+        <span class="font-preview" style="font-family: 'Inter';">Inter</span>
+        Clean Sans
+      </button>
+      <button class="font-btn" onclick="changeFont('Roboto', 'Roboto, sans-serif')">
+        <span class="font-preview" style="font-family: 'Roboto';">Roboto</span>
+        Standard UI
+      </button>
+      <button class="font-btn" onclick="changeFont('Literata', 'Literata, serif')">
+        <span class="font-preview" style="font-family: 'Literata';">Literata</span>
+        Elegant Serif
+      </button>
+      <button class="font-btn" onclick="changeFont('JetBrains Mono', 'JetBrains Mono, monospace')">
+        <span class="font-preview" style="font-family: 'JetBrains Mono';">Mono</span>
+        Technical
+      </button>
+    </div>
+  </div>
 
 
   <div class="history-panel" id="historyPanel">
@@ -799,16 +873,27 @@
 
   <div id="questionCard" class="question-card" style="display:none"></div>
   <button id="nextBtn" class="next-btn" onclick="nextQuestion()">Next Question →</button>
-
   <div id="scoreScreen" class="score-screen"></div>
 </div>
 
 <script>
 // ── LOCAL STORAGE SESSION ──
+let currentUser = null;
+let currentFont = localStorage.getItem('pw_quiz_font') || 'Syne';
+
+// Init
 document.addEventListener('DOMContentLoaded', () => {
-  const savedUser = localStorage.getItem('pw_quiz_user');
-  if (savedUser) {
-    showApp(savedUser);
+  const saved = localStorage.getItem('pw_quiz_user');
+  if (saved) {
+    currentUser = saved;
+  }
+  
+  // Apply saved font
+  const savedFont = localStorage.getItem('pw_quiz_font_family') || 'Syne, sans-serif';
+  document.documentElement.style.setProperty('--font-main', savedFont);
+  
+  if (currentUser) {
+    showApp(currentUser);
   } else {
     showAuth();
   }
@@ -850,11 +935,30 @@ function showAuth() {
 
 // ── HISTORY ──
 let historyOpen = false;
+let settingsOpen = false;
+
+function toggleSettings() {
+  settingsOpen = !settingsOpen;
+  document.getElementById('settingsPanel').classList.toggle('open', settingsOpen);
+  if (settingsOpen && historyOpen) toggleHistory();
+}
+
+function changeFont(name, family) {
+  document.documentElement.style.setProperty('--font-main', family);
+  localStorage.setItem('pw_quiz_font', name);
+  localStorage.setItem('pw_quiz_font_family', family);
+  
+  // Update UI active state
+  document.querySelectorAll('.font-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.textContent.includes(name));
+  });
+}
 
 function toggleHistory() {
   historyOpen = !historyOpen;
   document.getElementById('historyPanel').classList.toggle('open', historyOpen);
   document.getElementById('historyArrow').textContent = historyOpen ? '▲' : '▼';
+  if (historyOpen && settingsOpen) toggleSettings();
 }
 
 function loadHistory() {

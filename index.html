@@ -244,32 +244,8 @@
   }
 
   .logout-btn:hover { border-color: var(--red); color: var(--red); }
-  .history-btn {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    color: var(--muted);
-    font-family: 'Syne', sans-serif;
-    font-size: 0.8rem;
-    font-weight: 700;
-    padding: 0.4rem 0.8rem;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .settings-btn {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    color: var(--muted);
-    font-family: 'Syne', sans-serif;
-    font-size: 0.8rem;
-    font-weight: 700;
-    padding: 0.4rem 0.8rem;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .settings-btn:hover { border-color: var(--accent2); color: var(--accent2); }
   .history-btn:hover { border-color: var(--yellow); color: var(--yellow); }
+  .settings-btn:hover { border-color: var(--accent2); color: var(--accent2); }
 
   /* Settings panel */
   .settings-panel {
@@ -281,6 +257,7 @@
     margin-bottom: 2rem;
     animation: fadeIn 0.3s ease;
   }
+  .settings-panel.open { display: block; }
   .settings-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 1.2rem; color: var(--accent2); font-family: 'Syne', sans-serif; }
   .settings-subtitle { font-size: 0.85rem; font-weight: 700; margin-bottom: 0.6rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 1rem; }
   
@@ -974,7 +951,11 @@ let settingsOpen = false;
 function toggleSettings() {
   settingsOpen = !settingsOpen;
   document.getElementById('settingsPanel').classList.toggle('open', settingsOpen);
-  if (settingsOpen && historyOpen) toggleHistory();
+  if (settingsOpen && historyOpen) {
+    historyOpen = false;
+    document.getElementById('historyPanel').classList.remove('open');
+    document.getElementById('historyArrow').textContent = '▼';
+  }
 }
 
 function changeFont(name, family) {
@@ -1001,9 +982,17 @@ function changeFontSize(size) {
 
 function toggleHistory() {
   historyOpen = !historyOpen;
-  document.getElementById('historyPanel').classList.toggle('open', historyOpen);
+  const panel = document.getElementById('historyPanel');
+  panel.classList.toggle('open', historyOpen);
   document.getElementById('historyArrow').textContent = historyOpen ? '▲' : '▼';
-  if (historyOpen && settingsOpen) toggleSettings();
+  
+  if (historyOpen) {
+    loadHistory();
+    if (settingsOpen) {
+      settingsOpen = false;
+      document.getElementById('settingsPanel').classList.remove('open');
+    }
+  }
 }
 
 function loadHistory() {
